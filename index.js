@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 
-app.get('/page/documents', require('./controllers/document').show);
+app.get('/page/document', require('./controllers/document').show);
 
 app.get('/ping', (req, res) => res.send('pong'));
 
