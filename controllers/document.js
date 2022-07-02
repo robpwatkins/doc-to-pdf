@@ -23,14 +23,15 @@ const show = async (req, res) => {
   })
   html.body = `<div id="templates">${html.body}</div>`;
   html = `<html><head>${html.head}</head><body>${html.body}</body></html>`;
+  const contacts = await getSheetData('1_NrUTRK5SSxkVf5h-ns8fwKzNnWhHQmFGAD7DISJ7bg', 'Sheet1');
+  const obj = {};
+  obj.contact = contacts.find(contact => contact.id === contactId);
   const $ = cheerio.load(html);
   $('body').append(`
     <div id="tester">heyoo</div>
   `);
-  const contacts = await getSheetData('1_NrUTRK5SSxkVf5h-ns8fwKzNnWhHQmFGAD7DISJ7bg', 'Sheet1');
-  const obj = {};
-  obj.contact = contacts.find(contact => contact.id === contactId);
-  const template = Handlebars.compile(html);
+  console.log('html: ', html);
+  const template = Handlebars.compile($.html());
   html = template(JSON.parse(JSON.stringify(obj)));
   res.send(html);
 };
