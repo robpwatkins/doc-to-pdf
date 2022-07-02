@@ -7,7 +7,7 @@ const getDocHTML = async (fileId) => {
     fileId,
     mimeType: 'text/html'
   });
-  console.log('html: ', html);
+  return html;
 };
 
 const getSheetData = async (spreadsheetId, range) => {
@@ -27,9 +27,10 @@ const getSheetData = async (spreadsheetId, range) => {
     })
     dataArr.push(rowObj);
   })
-  console.log('dataArr: ', dataArr);
   return dataArr;
 };
+
+module.exports = { getDocHTML, getSheetData };
 
 // getDocHTML('1gPfUidCtPwPOWyXNPsJDN7BXuKba4-iD5M1Ug5AYGdY');
 getSheetData('1_NrUTRK5SSxkVf5h-ns8fwKzNnWhHQmFGAD7DISJ7bg', 'Sheet1');
