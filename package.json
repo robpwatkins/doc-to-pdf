@@ -1,0 +1,25 @@
+{
+  "name": "doc-to-pdf",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.18.1",
+    "nodemon": "^2.0.18"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "dotenv nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robpwatkins/doc-to-pdf.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/robpwatkins/doc-to-pdf/issues"
+  },
+  "homepage": "https://github.com/robpwatkins/doc-to-pdf#readme"
+}
