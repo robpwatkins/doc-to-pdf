@@ -1,9 +1,11 @@
 const express = require('express');
 const app = express();
 
+app.use(express.json());
+
 app.get('/page/document', require('./controllers/document').show);
 
-app.get('/pdf/download', require('./controllers/pdf').download);
+app.post('/pdf/download', require('./controllers/pdf').download);
 
 app.get('/ping', (req, res) => res.send('pong'));
 

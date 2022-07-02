@@ -28,15 +28,36 @@ const show = async (req, res) => {
     const obj = {};
     obj.contact = contacts.find(contact => contact.id === contactId);
     const $ = cheerio.load(html);
+    const initialHTML = JSON.stringify($('html').html());
     $('body').append(`
-      <button id="download">DOWNLOAD PDF</button>
+      <button id="download" onclick="downloadPDF()">DOWNLOAD PDF</button>
       <script>
-        document.querySelector("#download").addEventListener("click", () => {
-          fetch('/pdf/download?contact_id=${contactId}&email=${email}');
-        });
+        function downloadPDF() {
+          var options = {
+            method: "POST",
+            headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              contact_id: "${contactId}",
+              email: "${email}",
+              html: ${initialHTML}
+            })
+          };
+          fetch("/pdf/download", options)
+            .then(response => response.arrayBuffer())
+            .then(buffer => saveByteArray('test-PDF', buffer))
+        };
+        function saveByteArray(fileName, byte) {
+          var blob = new Blob([byte], { type: "application/pdf" });
+          var link = document.createElement("a");
+          link.href = window.URL.createObjectURL(blob);
+          link.download = fileName;
+          link.click();
+        }
       </script>
     `);
-    console.log('html: ', html);
     const template = Handlebars.compile($.html());
     html = template(JSON.parse(JSON.stringify(obj)));
     res.send(html);
