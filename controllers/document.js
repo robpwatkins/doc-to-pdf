@@ -4,8 +4,8 @@ const css = require('css');
 const Handlebars = require('handlebars');
 
 const show = async (req, res) => {
-  const { contact_id: contactId, email } = req.query;
-  if (contactId && email) {
+  const { user_id: userId, email } = req.query;
+  if (userId) {
     const docTemplateIds = ['1dFpDXz2sv3h4XPR-kt0gV7v6LP5Zq3sMrhSfEhOmo5M']
     const docTemplates = await Promise.all(docTemplateIds.map((templateId) => getDocHTML(templateId)));
     let html = { head: '', body: '' };
@@ -24,14 +24,47 @@ const show = async (req, res) => {
     })
     html.body = `<div id="templates">${html.body}</div>`;
     html = `<html><head>${html.head}</head><body>${html.body}</body></html>`;
-    const contacts = await getSheetData('1_NrUTRK5SSxkVf5h-ns8fwKzNnWhHQmFGAD7DISJ7bg', 'Sheet1');
+    html = html.split('[[ signature ]]').join('<span class=signature>Signature</span>');
+    html = html.split('[[ initials ]]').join('<span class=initials>Initials</span>');
+    const users = await getSheetData('1_NrUTRK5SSxkVf5h-ns8fwKzNnWhHQmFGAD7DISJ7bg', 'Sheet1');
     const obj = {};
-    obj.contact = contacts.find(contact => contact.id === contactId);
+    obj.user = users.find(user => user.id === userId);
     const $ = cheerio.load(html);
-    const initialHTML = JSON.stringify($('html').html());
+    if (req.query.backend) {
+      const template = Handlebars.compile($.html());
+      html = template(JSON.parse(JSON.stringify(obj)));
+      return res.send(html);
+    }
     $('body').append(`
-      <button id="download" onclick="downloadPDF()">DOWNLOAD PDF</button>
+      <style>
+        .signature, .initials {
+          color: lightgray;
+          font-family: cursive;
+        }
+
+        .entered {
+          color: black;
+        }
+      </style>
+      <input name="signature" placeholder=Signature />
+      <br />
+      <input name="initials" placeholder=Initials />
+      <br />
+      <button id="download" onclick="downloadPDF()" style="margin-top: 10px;">SIGN AND DOWNLOAD</button>
       <script>
+        document.querySelector('[name="signature"]').addEventListener('keyup', (e) => {
+          document.querySelectorAll('.signature').forEach(el => {
+            console.log('value: ', e.target.value);
+            el.innerHTML = e.target.value;
+            el.classList.add('entered');
+          })
+        })
+        document.querySelector('[name="initials"]').addEventListener('keyup', (e) => {
+          document.querySelectorAll('.initials').forEach(el => {
+            el.innerHTML = e.target.value;
+            el.classList.add('entered');
+          })
+        })
         function downloadPDF() {
           var options = {
             method: "POST",
@@ -40,9 +73,8 @@ const show = async (req, res) => {
               "Content-Type": "application/json"
             },
             body: JSON.stringify({
-              contact_id: "${contactId}",
+              user_id: "${userId}",
               email: "${email}",
-              html: ${initialHTML}
             })
           };
           fetch("/pdf/download", options)
