@@ -72,7 +72,7 @@ const show = async (req, res) => {
         <button id="download" onclick="downloadPDF()" style="margin-top: 10px;">SUBMIT AND DOWNLOAD</button>
       </div>
       <script>
-        function setValues(e) {
+        function updateValues(e) {
           var selector = "." + e.target.name;
           document.querySelectorAll(selector).forEach(el => {
             if (e.target.value) {
@@ -84,8 +84,8 @@ const show = async (req, res) => {
             }
           });
         }
-        document.querySelector("#signature").addEventListener('keyup', (e) => setValues(e));
-        document.querySelector("#initials").addEventListener('keyup', (e) => setValues(e));
+        document.querySelector("#signature").addEventListener('keyup', (e) => updateValues(e));
+        document.querySelector("#initials").addEventListener('keyup', (e) => updateValues(e));
         function downloadPDF() {
           var options = {
             method: "POST",
