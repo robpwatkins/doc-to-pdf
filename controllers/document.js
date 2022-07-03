@@ -30,38 +30,46 @@ const show = async (req, res) => {
     const obj = {};
     obj.user = users.find(user => user.id === userId);
     const $ = cheerio.load(html);
-    if (req.query.backend) {
-      const template = Handlebars.compile($.html());
-      html = template(JSON.parse(JSON.stringify(obj)));
-      return res.send(html);
-    }
     $('body').append(`
       <style>
         .signature, .initials {
           color: lightgray;
           font-family: cursive;
         }
-
+        
         .entered {
           color: black;
         }
+
+        .backend {
+          font-style: italic;
+        }
       </style>
+    `);
+    if (req.query.backend) {
+      const template = Handlebars.compile($.html());
+      html = template(JSON.parse(JSON.stringify(obj)));
+      return res.send(html);
+    }
+    $('body').append(`
       <input name="signature" placeholder=Signature />
       <br />
       <input name="initials" placeholder=Initials />
       <br />
-      <button id="download" onclick="downloadPDF()" style="margin-top: 10px;">SIGN AND DOWNLOAD</button>
+      <button id="download" onclick="downloadPDF()" style="margin-top: 10px;">SUBMIT AND DOWNLOAD</button>
       <script>
+        var signature, intitials;
         document.querySelector('[name="signature"]').addEventListener('keyup', (e) => {
           document.querySelectorAll('.signature').forEach(el => {
-            console.log('value: ', e.target.value);
             el.innerHTML = e.target.value;
+            signature = e.target.value;
             el.classList.add('entered');
           })
         })
         document.querySelector('[name="initials"]').addEventListener('keyup', (e) => {
           document.querySelectorAll('.initials').forEach(el => {
             el.innerHTML = e.target.value;
+            initials = e.target.value;
             el.classList.add('entered');
           })
         })
@@ -75,6 +83,8 @@ const show = async (req, res) => {
             body: JSON.stringify({
               user_id: "${userId}",
               email: "${email}",
+              signature,
+              initials
             })
           };
           fetch("/pdf/download", options)
