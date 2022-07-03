@@ -1,4 +1,15 @@
-const { getGoogleClient } = require('../utils/getAuthenticatedGoogleClient');
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
+const { getGoogleJwt, getGoogleClient } = require('../utils/getAuthenticatedGoogleClient');
+
+const getDocInfo = async (fileName) => {
+  const jwt = await getGoogleJwt();
+  await jwt.authorize();
+  const { access_token: accessToken } = jwt.gtoken.rawToken;
+  const response = await (await fetch(`https://docs.googleapis.com/v1/documents/${fileName}`, {
+    headers: { Authorization: `Bearer ${accessToken}` }
+  })).json();
+  console.log('response: ', response);
+};
 
 const getDocHTML = async (fileId) => {
   const google = await getGoogleClient();
@@ -32,5 +43,6 @@ const getSheetData = async (spreadsheetId, range) => {
 
 module.exports = { getDocHTML, getSheetData };
 
+getDocInfo('Test Doc');
 // getDocHTML('1gPfUidCtPwPOWyXNPsJDN7BXuKba4-iD5M1Ug5AYGdY');
-getSheetData('1_NrUTRK5SSxkVf5h-ns8fwKzNnWhHQmFGAD7DISJ7bg', 'Sheet1');
+// getSheetData('1_NrUTRK5SSxkVf5h-ns8fwKzNnWhHQmFGAD7DISJ7bg', 'Sheet1');

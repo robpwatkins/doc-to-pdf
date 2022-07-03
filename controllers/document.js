@@ -1,5 +1,4 @@
 const { getDocHTML, getSheetData } = require('../plugins/googleDrive');
-const { setValues } = require('../utils/document');
 const cheerio = require('cheerio');
 const css = require('css');
 const Handlebars = require('handlebars');
