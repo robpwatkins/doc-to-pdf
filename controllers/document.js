@@ -32,6 +32,16 @@ const show = async (req, res) => {
     const $ = cheerio.load(html);
     $('body').append(`
       <style>
+        #templates {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+
+        #inputs {
+          text-align: center;
+        }
+
         .signature, .initials {
           color: lightgray;
           font-family: cursive;
@@ -51,12 +61,15 @@ const show = async (req, res) => {
       html = template(JSON.parse(JSON.stringify(obj)));
       return res.send(html);
     }
-    $('body').append(`
-      <input name="signature" placeholder=Signature />
-      <br />
-      <input name="initials" placeholder=Initials />
-      <br />
-      <button id="download" onclick="downloadPDF()" style="margin-top: 10px;">SUBMIT AND DOWNLOAD</button>
+    $('#templates').append(`
+      <div id="inputs">
+        <br />
+        <input name="signature" placeholder=Signature />
+        <br />
+        <input name="initials" placeholder=Initials />
+        <br />
+        <button id="download" onclick="downloadPDF()" style="margin-top: 10px;">SUBMIT AND DOWNLOAD</button>
+      </div>
       <script>
         var signature, intitials;
         document.querySelector('[name="signature"]').addEventListener('keyup', (e) => {
