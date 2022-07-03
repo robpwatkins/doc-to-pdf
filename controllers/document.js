@@ -1,4 +1,5 @@
 const { getDocHTML, getSheetData } = require('../plugins/googleDrive');
+const { setValues } = require('../utils/document');
 const cheerio = require('cheerio');
 const css = require('css');
 const Handlebars = require('handlebars');
@@ -64,28 +65,27 @@ const show = async (req, res) => {
     $('#templates').append(`
       <div id="inputs">
         <br />
-        <input name="signature" placeholder=Signature />
+        <input id="signature" name="signature" placeholder=Signature />
         <br />
-        <input name="initials" placeholder=Initials />
+        <input id="initials" name="initials" placeholder=Initials />
         <br />
         <button id="download" onclick="downloadPDF()" style="margin-top: 10px;">SUBMIT AND DOWNLOAD</button>
       </div>
       <script>
-        var signature, intitials;
-        document.querySelector('[name="signature"]').addEventListener('keyup', (e) => {
-          document.querySelectorAll('.signature').forEach(el => {
-            el.innerHTML = e.target.value;
-            signature = e.target.value;
-            el.classList.add('entered');
-          })
-        })
-        document.querySelector('[name="initials"]').addEventListener('keyup', (e) => {
-          document.querySelectorAll('.initials').forEach(el => {
-            el.innerHTML = e.target.value;
-            initials = e.target.value;
-            el.classList.add('entered');
-          })
-        })
+        function setValues(e) {
+          var selector = "." + e.target.name;
+          document.querySelectorAll(selector).forEach(el => {
+            if (e.target.value) {
+              el.innerHTML = e.target.value;
+              el.classList.add("entered");
+            } else {
+              el.innerHTML = e.target.placeholder;
+              el.classList.remove("entered");
+            }
+          });
+        }
+        document.querySelector("#signature").addEventListener('keyup', (e) => setValues(e));
+        document.querySelector("#initials").addEventListener('keyup', (e) => setValues(e));
         function downloadPDF() {
           var options = {
             method: "POST",
@@ -96,8 +96,8 @@ const show = async (req, res) => {
             body: JSON.stringify({
               user_id: "${userId}",
               email: "${email}",
-              signature,
-              initials
+              signature: document.querySelector("#signature").value,
+              initials: document.querySelector("#initials").value
             })
           };
           fetch("/pdf/download", options)
