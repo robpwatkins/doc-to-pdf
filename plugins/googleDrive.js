@@ -11,16 +11,20 @@ const { getGoogleJwt, getGoogleClient } = require('../utils/getAuthenticatedGoog
 //   console.log('response: ', response);
 // };
 
-const getTemplates = async (templatesName) => {
+const getTemplateIds = async (templatesName) => {
   const google = await getGoogleClient();
   const drive = google.drive('v3');
-  const response = await drive.files.list({
+  const { files } = (await drive.files.list({
     q: `name contains '${templatesName}'`,
     fields: 'nextPageToken, files(id, name)',
     spaces: 'drive',
-  })
-  const { files } = response.data;
-  console.log('files: ', files);
+  })).data;
+  const sortedFiles = files.sort((a, b) => {
+    const numA = Number(a.name.split(' - ')[1].split('')[0]);
+    const numB = Number(b.name.split(' - ')[1].split('')[0]);
+    return numA > numB ? 1 : -1;
+  });
+  return sortedFiles.map((file) => file.id);
 };
 
 const getDocHTML = async (fileId) => {
@@ -53,8 +57,8 @@ const getSheetData = async (spreadsheetId, range) => {
   return dataArr;
 };
 
-module.exports = { getDocHTML, getSheetData };
+module.exports = { getTemplateIds, getDocHTML, getSheetData };
 
-getTemplates('TX EP');
+// getTemplateIds('TX EP');
 // getDocHTML('1gPfUidCtPwPOWyXNPsJDN7BXuKba4-iD5M1Ug5AYGdY');
 // getSheetData('1_NrUTRK5SSxkVf5h-ns8fwKzNnWhHQmFGAD7DISJ7bg', 'Sheet1');

@@ -1,15 +1,14 @@
-const { getDocHTML, getSheetData } = require('../plugins/googleDrive');
+const { getTemplateIds, getDocHTML, getSheetData } = require('../plugins/googleDrive');
 const cheerio = require('cheerio');
 const css = require('css');
 const Handlebars = require('handlebars');
 
 const show = async (req, res) => {
-  const { docName } = req.params;
+  const { templatesName } = req.params;
   const { user_id: userId, email } = req.query;
-  console.log('here: ', docName, userId);
   if (userId) {
-    const docTemplateIds = ['1dFpDXz2sv3h4XPR-kt0gV7v6LP5Zq3sMrhSfEhOmo5M']
-    const docTemplates = await Promise.all(docTemplateIds.map((templateId) => getDocHTML(templateId)));
+    const templateIds = await getTemplateIds(templatesName);
+    const docTemplates = await Promise.all(templateIds.map((templateId) => getDocHTML(templateId)));
     let html = { head: '', body: '' };
     docTemplates.forEach((template, idx) => {
       const $ = cheerio.load(template);
@@ -21,8 +20,8 @@ const show = async (req, res) => {
         }))
         $('head').append(`<style>${css.stringify(style)}</style>`);
       }
-      html.head = $('head').html();
-      html.body = `<div id="template-${idx}" class="template">${$('body').html()}</div>`;
+      html.head += $('head').html();
+      html.body += `<div id="template-${idx}" class="template">${$('body').html()}</div>`;
     })
     html.body = `<div id="templates">${html.body}</div>`;
     html = `<html><head>${html.head}</head><body>${html.body}</body></html>`;
