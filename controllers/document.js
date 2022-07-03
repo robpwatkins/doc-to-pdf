@@ -4,7 +4,9 @@ const css = require('css');
 const Handlebars = require('handlebars');
 
 const show = async (req, res) => {
+  const { docName } = req.params;
   const { user_id: userId, email } = req.query;
+  console.log('here: ', docName, userId);
   if (userId) {
     const docTemplateIds = ['1dFpDXz2sv3h4XPR-kt0gV7v6LP5Zq3sMrhSfEhOmo5M']
     const docTemplates = await Promise.all(docTemplateIds.map((templateId) => getDocHTML(templateId)));

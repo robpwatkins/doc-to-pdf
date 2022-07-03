@@ -1,15 +1,26 @@
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 const { getGoogleJwt, getGoogleClient } = require('../utils/getAuthenticatedGoogleClient');
 
-const getDocInfo = async (fileId) => {
-  const jwt = await getGoogleJwt();
-  await jwt.authorize();
-  const { access_token: accessToken } = jwt.gtoken.rawToken;
-  console.log('accessToken: ', accessToken);
-  const response = await (await fetch(`https://docs.googleapis.com/v1/documents/${fileId}`, {
-    headers: { Authorization: `Bearer ${accessToken}` }
-  })).json();
-  console.log('response: ', response);
+// const getDocInfo = async (docName) => {
+//   const jwt = await getGoogleJwt();
+//   await jwt.authorize();
+//   const { access_token: accessToken } = jwt.gtoken.rawToken;
+//   const response = await (await fetch(`https://docs.googleapis.com/v1/files?name=${docName}`, {
+//     headers: { Authorization: `Bearer ${accessToken}` }
+//   })).json();
+//   console.log('response: ', response);
+// };
+
+const getTemplates = async (templatesName) => {
+  const google = await getGoogleClient();
+  const drive = google.drive('v3');
+  const response = await drive.files.list({
+    q: `name contains '${templatesName}'`,
+    fields: 'nextPageToken, files(id, name)',
+    spaces: 'drive',
+  })
+  const { files } = response.data;
+  console.log('files: ', files);
 };
 
 const getDocHTML = async (fileId) => {
@@ -44,6 +55,6 @@ const getSheetData = async (spreadsheetId, range) => {
 
 module.exports = { getDocHTML, getSheetData };
 
-getDocInfo('1gPfUidCtPwPOWyXNPsJDN7BXuKba4-iD5M1Ug5AYGdY');
+getTemplates('TX EP');
 // getDocHTML('1gPfUidCtPwPOWyXNPsJDN7BXuKba4-iD5M1Ug5AYGdY');
 // getSheetData('1_NrUTRK5SSxkVf5h-ns8fwKzNnWhHQmFGAD7DISJ7bg', 'Sheet1');
