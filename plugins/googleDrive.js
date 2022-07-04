@@ -1,30 +1,31 @@
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 const { getGoogleJwt, getGoogleClient } = require('../utils/getAuthenticatedGoogleClient');
 
-// const getDocInfo = async (docName) => {
-//   const jwt = await getGoogleJwt();
-//   await jwt.authorize();
-//   const { access_token: accessToken } = jwt.gtoken.rawToken;
-//   const response = await (await fetch(`https://docs.googleapis.com/v1/files?name=${docName}`, {
-//     headers: { Authorization: `Bearer ${accessToken}` }
-//   })).json();
-//   console.log('response: ', response);
-// };
+const getDocInfo = async (docId) => {
+  const jwt = await getGoogleJwt();
+  await jwt.authorize();
+  const { access_token: accessToken } = jwt.gtoken.rawToken;
+  const response = await (await fetch(`https://docs.googleapis.com/v1/documents/${docId}`, {
+    headers: { Authorization: `Bearer ${accessToken}` }
+  })).json();
+  console.log('response: ', response);
+};
 
-const getTemplateIds = async (templatesName) => {
+const getTemplateIds = async (docTitle) => {
   const google = await getGoogleClient();
   const drive = google.drive('v3');
-  const { files } = (await drive.files.list({
-    q: `name contains '${templatesName}'`,
-    fields: 'nextPageToken, files(id, name)',
-    spaces: 'drive',
+  let { files } = (await drive.files.list({
+    q: `name contains '${docTitle}'`,
+    fields: 'files(id, name)',
   })).data;
-  const sortedFiles = files.sort((a, b) => {
-    const numA = Number(a.name.split(' - ')[1].split('')[0]);
-    const numB = Number(b.name.split(' - ')[1].split('')[0]);
-    return numA > numB ? 1 : -1;
-  });
-  return sortedFiles.map((file) => file.id);
+  if (files.length > 1) {
+    files = files.sort((a, b) => {
+      const numA = Number(a.name.split(' - ')[1].charAt(0));
+      const numB = Number(b.name.split(' - ')[1].charAt(0));
+      return numA > numB ? 1 : -1;
+    });
+  }
+  return files.map((file) => file.id);
 };
 
 const getDocHTML = async (fileId) => {
@@ -59,6 +60,7 @@ const getSheetData = async (spreadsheetId, range) => {
 
 module.exports = { getTemplateIds, getDocHTML, getSheetData };
 
+getDocInfo('1dFpDXz2sv3h4XPR-kt0gV7v6LP5Zq3sMrhSfEhOmo5M');
 // getTemplateIds('TX EP');
 // getDocHTML('1gPfUidCtPwPOWyXNPsJDN7BXuKba4-iD5M1Ug5AYGdY');
 // getSheetData('1_NrUTRK5SSxkVf5h-ns8fwKzNnWhHQmFGAD7DISJ7bg', 'Sheet1');

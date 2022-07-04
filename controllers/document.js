@@ -4,10 +4,10 @@ const css = require('css');
 const Handlebars = require('handlebars');
 
 const show = async (req, res) => {
-  const { templatesName } = req.params;
+  const { docTitle } = req.params;
   const { user_id: userId, email } = req.query;
   if (userId) {
-    const templateIds = await getTemplateIds(templatesName);
+    const templateIds = await getTemplateIds(docTitle);
     const docTemplates = await Promise.all(templateIds.map((templateId) => getDocHTML(templateId)));
     let html = { head: '', body: '' };
     docTemplates.forEach((template, idx) => {
