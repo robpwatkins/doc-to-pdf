@@ -8,10 +8,6 @@ function setValues(signature, initials) {
   }
 };
 
-function tester() {
-  document.querySelector('#templates').border = '2px solid black';
-}
-
 function updateValues(e) {
   const selector = "." + e.target.name;
   document.querySelectorAll(selector).forEach(el => {
