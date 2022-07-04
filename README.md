@@ -1,1 +1,1 @@
-# <u>updocs</u> User-data parsing document service
+# updocs: User-data parsing document service
