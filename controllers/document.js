@@ -1,4 +1,4 @@
-const { getTemplateIds, getDocHTML, getSheetData } = require('../plugins/googleDrive');
+const { getDocInfo, getTemplateIds, getDocHTML, getSheetData } = require('../plugins/googleDrive');
 const cheerio = require('cheerio');
 const css = require('css');
 const Handlebars = require('handlebars');
@@ -27,6 +27,13 @@ const show = async (req, res) => {
     html = `<html><head>${html.head}</head><body>${html.body}</body></html>`;
     html = html.split('[[ signature ]]').join('<span class=signature>Signature</span>');
     html = html.split('[[ initials ]]').join('<span class=initials>Initials</span>');
+
+    const templatesInfo = await Promise.all(templateIds.map(async templateId => {
+      const { title, headers, footers, footnotes } = await getDocInfo(templateId);
+      const footnotesCount = footnotes ? Object.keys(footnotes).length : 0;
+      return { title, hasHeader: !!headers, hasFooter: !!footers, footnotesCount };
+    }));
+
     const users = await getSheetData('1_NrUTRK5SSxkVf5h-ns8fwKzNnWhHQmFGAD7DISJ7bg', 'Sheet1');
     const obj = {};
     obj.user = users.find(user => user.id === userId);

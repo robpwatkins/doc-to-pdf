@@ -8,7 +8,7 @@ const getDocInfo = async (docId) => {
   const response = await (await fetch(`https://docs.googleapis.com/v1/documents/${docId}`, {
     headers: { Authorization: `Bearer ${accessToken}` }
   })).json();
-  console.log('response: ', response);
+  return response;
 };
 
 const getTemplateIds = async (docTitle) => {
@@ -58,9 +58,9 @@ const getSheetData = async (spreadsheetId, range) => {
   return dataArr;
 };
 
-module.exports = { getTemplateIds, getDocHTML, getSheetData };
+module.exports = { getDocInfo, getTemplateIds, getDocHTML, getSheetData };
 
-getDocInfo('1dFpDXz2sv3h4XPR-kt0gV7v6LP5Zq3sMrhSfEhOmo5M');
+// getDocInfo('1dFpDXz2sv3h4XPR-kt0gV7v6LP5Zq3sMrhSfEhOmo5M');
 // getTemplateIds('TX EP');
 // getDocHTML('1gPfUidCtPwPOWyXNPsJDN7BXuKba4-iD5M1Ug5AYGdY');
 // getSheetData('1_NrUTRK5SSxkVf5h-ns8fwKzNnWhHQmFGAD7DISJ7bg', 'Sheet1');
