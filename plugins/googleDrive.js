@@ -11,11 +11,11 @@ const getDocInfo = async (docId) => {
   return response;
 };
 
-const getTemplateIds = async (docTitle) => {
+const getTemplateIds = async (templateTag) => {
   const google = await getGoogleClient();
   const drive = google.drive('v3');
   let { files } = (await drive.files.list({
-    q: `name contains '${docTitle}'`,
+    q: `name contains '${templateTag}'`,
     fields: 'files(id, name)',
   })).data;
   if (files.length > 1) {

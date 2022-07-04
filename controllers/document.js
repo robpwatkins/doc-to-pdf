@@ -1,13 +1,14 @@
 const { getDocInfo, getTemplateIds, getDocHTML, getSheetData } = require('../plugins/googleDrive');
+const { updateValues, downloadPDF, saveByteArr } = require('../utils/scripts');
 const cheerio = require('cheerio');
 const css = require('css');
 const Handlebars = require('handlebars');
 
 const show = async (req, res) => {
-  const { docTitle } = req.params;
+  const { templateTag } = req.params;
   const { user_id: userId, email } = req.query;
   if (userId) {
-    const templateIds = await getTemplateIds(docTitle);
+    const templateIds = await getTemplateIds(templateTag);
     const docTemplates = await Promise.all(templateIds.map((templateId) => getDocHTML(templateId)));
     let html = { head: '', body: '' };
     docTemplates.forEach((template, idx) => {
@@ -76,48 +77,19 @@ const show = async (req, res) => {
         <br />
         <input id="initials" name="initials" placeholder=Initials />
         <br />
-        <button id="download" onclick="downloadPDF()" style="margin-top: 10px;">SUBMIT AND DOWNLOAD</button>
+        <button id="download" style="margin-top: 10px;">SUBMIT AND DOWNLOAD</button>
       </div>
       <script>
-        function updateValues(e) {
-          var selector = "." + e.target.name;
-          document.querySelectorAll(selector).forEach(el => {
-            if (e.target.value) {
-              el.innerHTML = e.target.value;
-              el.classList.add("entered");
-            } else {
-              el.innerHTML = e.target.placeholder;
-              el.classList.remove("entered");
-            }
-          });
-        }
+        const updateValues = ${updateValues};
+        const downloadPDF = ${downloadPDF};
+        const saveByteArr = ${saveByteArr};
         document.querySelector("#signature").addEventListener('keyup', (e) => updateValues(e));
         document.querySelector("#initials").addEventListener('keyup', (e) => updateValues(e));
-        function downloadPDF() {
-          var options = {
-            method: "POST",
-            headers: {
-              "Accept": "application/json",
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              user_id: "${userId}",
-              email: "${email}",
-              signature: document.querySelector("#signature").value,
-              initials: document.querySelector("#initials").value
-            })
-          };
-          fetch("/pdf/download", options)
-            .then(response => response.arrayBuffer())
-            .then(buffer => saveByteArray('test-PDF', buffer))
-        };
-        function saveByteArray(fileName, byte) {
-          var blob = new Blob([byte], { type: "application/pdf" });
-          var link = document.createElement("a");
-          link.href = window.URL.createObjectURL(blob);
-          link.download = fileName;
-          link.click();
-        }
+        document.querySelector("#download").addEventListener('click', () => {
+          const signature = document.querySelector("#signature").value;
+          const initials = document.querySelector("#initials").value;
+          downloadPDF("${templateTag}", "${userId}", "${email}", signature, initials);
+        });
       </script>
     `);
     const template = Handlebars.compile($.html());

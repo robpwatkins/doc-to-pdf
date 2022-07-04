@@ -3,7 +3,7 @@ const app = express();
 
 app.use(express.json());
 
-app.get('/document/:docTitle', require('./controllers/document').show);
+app.get('/document/:templateTag', require('./controllers/document').show);
 app.post('/pdf/download', require('./controllers/pdf').download);
 app.get('/ping', (req, res) => res.send('pong'));
 
