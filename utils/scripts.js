@@ -1,4 +1,4 @@
-function setValues(signature, initials) {
+const setValues = (signature, initials) => {
   const values = { signature, initials };
   for (key in values) {
     document.querySelectorAll(`.${key}`).forEach(el => {
@@ -8,25 +8,25 @@ function setValues(signature, initials) {
   }
 };
 
-function updateValues(e) {
+const updateValues = (e) => {
   const selector = "." + e.target.name;
   document.querySelectorAll(selector).forEach(el => {
     if (e.target.value) {
       el.innerHTML = e.target.value;
-      el.classList.add("entered");
+      el.classList.add('entered');
     } else {
       el.innerHTML = e.target.placeholder;
-      el.classList.remove("entered");
+      el.classList.remove('entered');
     }
   });
 };
 
-function downloadPDF(templateTag, userId, email, signature, initials) {
+const downloadPDF = (templateTag, userId, email, signature, initials) => {
   const options = {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Accept": "application/json",
-      "Content-Type": "application/json"
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
       template_tag: templateTag,
@@ -36,14 +36,14 @@ function downloadPDF(templateTag, userId, email, signature, initials) {
       initials
     })
   };
-  fetch("/pdf/download", options)
+  fetch('/pdf/download', options)
     .then(response => response.arrayBuffer())
     .then(buffer => saveByteArr('test-PDF', buffer))
 };
 
-async function saveByteArr(fileName, byte) {
-  const blob = new Blob([byte], { type: "application/pdf" });
-  const link = document.createElement("a");
+const saveByteArr = (fileName, byte) => {
+  const blob = new Blob([byte], { type: 'application/pdf' });
+  const link = document.createElement('a');
   link.href = window.URL.createObjectURL(blob);
   link.download = fileName;
   link.click();

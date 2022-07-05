@@ -12,6 +12,7 @@ const getDocInfo = async (docId) => {
 };
 
 const getTemplateIds = async (templateTag) => {
+  console.log('templateTag: ', templateTag);
   const google = await getGoogleClient();
   const drive = google.drive('v3');
   let { files } = (await drive.files.list({
