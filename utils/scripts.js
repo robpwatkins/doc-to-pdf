@@ -9,7 +9,6 @@ const buildPages = (templatesInfo) => {
   initialMargin.style.height = `${marginTop}pt`;
   root.insertAdjacentElement('afterbegin', initialMargin);
   let currentHeight = pxPageHeight + marginTop;
-  root.style.border = '2px solid black';
   templateDivs.forEach((div, divIndex) => {
     let pageNumber = 1;
     const { title, hasHeader, hasFooter, footnotesCount, margins, dimensions } = templatesInfo[divIndex];

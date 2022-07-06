@@ -1,4 +1,4 @@
-const { getDocInfo, getMarginsAndDimensions, getTemplateIds, getDocHTML, getSheetData } = require('../plugins/googleDrive');
+const { getDocInfo, getTemplateIds, getDocHTML, getSheetData } = require('../plugins/googleDrive');
 const { buildPages, updateValues, downloadPDF, saveByteArr } = require('../utils/scripts');
 const cheerio = require('cheerio');
 const css = require('css');
@@ -29,12 +29,7 @@ const show = async (req, res) => {
     html = html.split('[[ signature ]]').join('<span class=signature>Signature</span>');
     html = html.split('[[ initials ]]').join('<span class=initials>Initials</span>');
 
-    const templatesInfo = await Promise.all(templateIds.map(async templateId => {
-      const { title, headers, footers, footnotes, documentStyle } = await getDocInfo(templateId);
-      const footnotesCount = footnotes ? Object.keys(footnotes).length : 0;
-      const { margins, dimensions } = getMarginsAndDimensions(documentStyle);
-      return { title, hasHeader: !!headers, hasFooter: !!footers, footnotesCount, margins, dimensions };
-    }));
+    const templatesInfo = await Promise.all(templateIds.map(async templateId => getDocInfo(templateId)));
 
     const templatesInfoStr = JSON.stringify(templatesInfo);
 
@@ -44,13 +39,21 @@ const show = async (req, res) => {
     const $ = cheerio.load(html);
     $('body').append(`
       <style>
+        body {
+          padding: 127px 0 0 256px;
+          background-color: #cccccc;
+        }
+
         #templates {
           display: flex;
           flex-direction: column;
           align-items: center;
+          overflow-wrap: anywhere;
+          background-color: white;
         }
 
         #inputs {
+          display: none;
           text-align: center;
         }
 

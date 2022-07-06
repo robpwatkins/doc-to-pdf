@@ -8,12 +8,14 @@ const getDocInfo = async (docId) => {
   const response = await (await fetch(`https://docs.googleapis.com/v1/documents/${docId}`, {
     headers: { Authorization: `Bearer ${accessToken}` }
   })).json();
-  return response;
-};
-
-const getMarginsAndDimensions = (documentStyle) => {
+  const { title, headers, footers, footnotes, documentStyle } = response;
+  const footnotesCount = footnotes ? Object.keys(footnotes).length : 0;
   const { marginTop, marginBottom, marginRight, marginLeft, pageSize } = documentStyle;
   return {
+    title,
+    hasHeader: !!headers,
+    hasFooter: !!footers,
+    footnotesCount, 
     margins: {
       top: marginTop.magnitude,
       right: marginRight.magnitude,
@@ -71,7 +73,7 @@ const getSheetData = async (spreadsheetId, range) => {
   return dataArr;
 };
 
-module.exports = { getDocInfo, getMarginsAndDimensions, getTemplateIds, getDocHTML, getSheetData };
+module.exports = { getDocInfo, getTemplateIds, getDocHTML, getSheetData };
 
 // getDocInfo('1dFpDXz2sv3h4XPR-kt0gV7v6LP5Zq3sMrhSfEhOmo5M');
 // getTemplateIds('TX EP');
