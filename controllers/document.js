@@ -1,5 +1,5 @@
-const { getDocInfo, getTemplateIds, getDocHTML, getSheetData } = require('../plugins/googleDrive');
-const { updateValues, downloadPDF, saveByteArr } = require('../utils/scripts');
+const { getDocInfo, getMarginsAndDimensions, getTemplateIds, getDocHTML, getSheetData } = require('../plugins/googleDrive');
+const { buildPages, updateValues, downloadPDF, saveByteArr } = require('../utils/scripts');
 const cheerio = require('cheerio');
 const css = require('css');
 const Handlebars = require('handlebars');
@@ -30,10 +30,13 @@ const show = async (req, res) => {
     html = html.split('[[ initials ]]').join('<span class=initials>Initials</span>');
 
     const templatesInfo = await Promise.all(templateIds.map(async templateId => {
-      const { title, headers, footers, footnotes } = await getDocInfo(templateId);
+      const { title, headers, footers, footnotes, documentStyle } = await getDocInfo(templateId);
       const footnotesCount = footnotes ? Object.keys(footnotes).length : 0;
-      return { title, hasHeader: !!headers, hasFooter: !!footers, footnotesCount };
+      const { margins, dimensions } = getMarginsAndDimensions(documentStyle);
+      return { title, hasHeader: !!headers, hasFooter: !!footers, footnotesCount, margins, dimensions };
     }));
+
+    const templatesInfoStr = JSON.stringify(templatesInfo);
 
     const users = await getSheetData('1_NrUTRK5SSxkVf5h-ns8fwKzNnWhHQmFGAD7DISJ7bg', 'Sheet1');
     const obj = {};
@@ -80,9 +83,12 @@ const show = async (req, res) => {
         <button id="download" style="margin-top: 10px;">SUBMIT AND DOWNLOAD</button>
       </div>
       <script>
+        const templatesInfo = ${templatesInfoStr};
+        const buildPages = ${buildPages};
         const updateValues = ${updateValues};
         const downloadPDF = ${downloadPDF};
         const saveByteArr = ${saveByteArr};
+        buildPages(templatesInfo);
         document.querySelector("#signature").addEventListener('keyup', (e) => updateValues(e));
         document.querySelector("#initials").addEventListener('keyup', (e) => updateValues(e));
         document.querySelector("#download").addEventListener('click', () => {

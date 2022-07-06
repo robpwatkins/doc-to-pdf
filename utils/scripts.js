@@ -1,3 +1,23 @@
+const buildPages = (templatesInfo) => {
+  const root = document.querySelector('#templates');
+  root.style.width = `${templatesInfo[0].dimensions.width}pt`;
+  const templateDivs = root.querySelectorAll('.template');
+  const { height: pxPageHeight } = templatesInfo[0].dimensions;
+  const initialMargin = document.createElement("div");
+  initialMargin.classList.add("margin");
+  const { top: marginTop } = templatesInfo[0].margins;
+  initialMargin.style.height = `${marginTop}pt`;
+  root.insertAdjacentElement('afterbegin', initialMargin);
+  let currentHeight = pxPageHeight + marginTop;
+  root.style.border = '2px solid black';
+  templateDivs.forEach((div, divIndex) => {
+    let pageNumber = 1;
+    const { title, hasHeader, hasFooter, footnotesCount, margins, dimensions } = templatesInfo[divIndex];
+    div.style.margin = `0 ${margins.right}pt 0 ${margins.left}pt`;
+    const els = div.querySelectorAll('*');
+  })
+};
+
 const setValues = (signature, initials) => {
   const values = { signature, initials };
   for (key in values) {
@@ -49,4 +69,4 @@ const saveByteArr = (fileName, byte) => {
   link.click();
 };
 
-module.exports = { setValues, updateValues, downloadPDF, saveByteArr };
+module.exports = { buildPages, setValues, updateValues, downloadPDF, saveByteArr };

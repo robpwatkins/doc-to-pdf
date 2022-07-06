@@ -11,8 +11,20 @@ const getDocInfo = async (docId) => {
   return response;
 };
 
+const getMarginsAndDimensions = (documentStyle) => {
+  const { marginTop, marginBottom, marginRight, marginLeft, pageSize } = documentStyle;
+  return {
+    margins: {
+      top: marginTop.magnitude,
+      right: marginRight.magnitude,
+      bottom: marginBottom.magnitude,
+      left: marginLeft.magnitude
+    },
+    dimensions: { height: pageSize.height.magnitude, width: pageSize.width.magnitude }
+  };
+};
+
 const getTemplateIds = async (templateTag) => {
-  console.log('templateTag: ', templateTag);
   const google = await getGoogleClient();
   const drive = google.drive('v3');
   let { files } = (await drive.files.list({
@@ -59,7 +71,7 @@ const getSheetData = async (spreadsheetId, range) => {
   return dataArr;
 };
 
-module.exports = { getDocInfo, getTemplateIds, getDocHTML, getSheetData };
+module.exports = { getDocInfo, getMarginsAndDimensions, getTemplateIds, getDocHTML, getSheetData };
 
 // getDocInfo('1dFpDXz2sv3h4XPR-kt0gV7v6LP5Zq3sMrhSfEhOmo5M');
 // getTemplateIds('TX EP');
