@@ -25,7 +25,25 @@ const show = async (req, res) => {
       html.body += `<div id="template-${idx}" class="template">${$('body').html()}</div>`;
     })
     html.body = `<div id="templates">${html.body}</div>`;
-    html = `<html><head>${html.head}</head><body>${html.body}</body></html>`;
+    const initialInputs = `
+      <div id="modal">
+        <div id="inputs">
+          <br />
+          <input id="signature" name="signature" placeholder=Signature />
+          <br />
+          <input id="initials" name="initials" placeholder=Initials />
+        </div>
+      </div>
+    `;
+    html = `
+      <html>
+        <head>${html.head}</head>
+        <body>
+          ${!req.query.backend ? initialInputs : ''}
+          ${html.body}
+        </body>
+      </html>
+    `;
     html = html.split('[[ signature ]]').join('<span class=signature>Signature</span>');
     html = html.split('[[ initials ]]').join('<span class=initials>Initials</span>');
 
@@ -52,9 +70,33 @@ const show = async (req, res) => {
           background-color: white;
         }
 
-        #inputs {
+        #modal {
+          position: fixed;
+          top: 0;
           display: none;
-          text-align: center;
+          justify-content: center;
+          align-items: center;
+          width: 100vw;
+          height: 100vh;
+          background-color: #000000a1;
+          -webkit-backdrop-filter: blur(3px);
+          backdrop-filter: blur(3px);
+          z-index: 1;
+        }
+
+        #inputs {
+          background-color: #cccccc;
+          border: 1px solid black;
+          padding: 25px 42px 10px;
+          border-radius: 5px;
+        }
+
+        #inputs:hover {
+          box-shadow: 2px 2px 7px black;
+        }
+
+        #instructions {
+          width: 216px;
         }
 
         .signature, .initials {
@@ -77,14 +119,6 @@ const show = async (req, res) => {
       return res.send(html);
     }
     $('#templates').append(`
-      <div id="inputs">
-        <br />
-        <input id="signature" name="signature" placeholder=Signature />
-        <br />
-        <input id="initials" name="initials" placeholder=Initials />
-        <br />
-        <button id="download" style="margin-top: 10px;">SUBMIT AND DOWNLOAD</button>
-      </div>
       <script>
         const templatesInfo = ${templatesInfoStr};
         const buildPages = ${buildPages};
