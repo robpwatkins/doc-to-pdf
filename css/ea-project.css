@@ -1,0 +1,205 @@
+* {
+  box-sizing: border-box;
+  border-collapse: collapse;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #aaaaaa;
+}
+
+#modal-container {
+  position: fixed;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  font-family: 'Trebuchet MS', sans-serif; 
+  font-size: 14px;
+  background-color: #000000a1;
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  z-index: 1;
+}
+
+#signing-info-modal {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  background-color: #dcdcdc;
+  padding: 25px 42px 10px;
+  border-radius: 10px;
+}
+
+#signing-info-modal:hover {
+  box-shadow: 2px 2px 7px black;
+}
+
+.modal-content {
+  margin-bottom: 10px;
+}
+
+.instructions {
+  width: 216px;
+}
+
+.instructions-1 {
+  font-size: 20px;
+}
+
+#close-modal-container {
+  width: 100%;
+  text-align: center;
+}
+
+#close-modal {
+  margin-top: 13px;
+  font-size: 13px;
+  text-decoration: underline;
+  background-color: unset;
+  border: none;
+  cursor: pointer;
+}
+
+#templates {
+  width: 612pt;
+  position: relative;
+  background-color: white;
+}
+
+.template {
+  margin: 0 72px;
+}
+
+#edit-signing-info {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+}
+.ec-input {
+  width: 85%;
+}
+
+#ec_1_phone_number__c, #emergency_contact_2_phone_number {
+  width: 40%;
+  text-align: center;
+}
+
+.footnotes-hr {
+  margin: 10px 0;
+  border: none;
+  border-top: solid 1px #000;
+  background-color: unset;
+  color: black;
+}
+
+.margin-bottom, .margin-top {
+  display: flex;
+  justify-content: center;
+}
+
+.margin-bottom {
+  position: relative;
+  align-items: flex-end;
+}
+
+.margin-top {
+  align-items: center;
+}
+
+.footer {
+  position: absolute;
+  right: 0;
+}
+
+.page-break {
+  position: relative;
+  height: 15px;
+  background-color: #aaaaaa;
+  width: 816px;
+}
+
+.page-number {
+  margin: 0;
+  padding-bottom: 15px;
+}
+
+.input-ref {
+  position: relative;
+}
+
+.signature, .initials, .ssn {
+  padding: .25rem .25rem .15rem;
+  color: #111111;
+  caret-color: transparent;
+  background-color: #FAFAFA;
+  opacity: .75;
+  border: 1px solid black;
+  border-radius: 2px;
+}
+
+.signature.client, .initials.client, .ssn.client {
+  position: absolute;
+  bottom: -5px;
+  left: -5px;
+}
+
+.signature:hover, .initials:hover, .ssn:hover {
+  box-shadow: 2px 2px 2px #666666;
+  cursor: pointer !important;
+}
+
+.signature.entered, .initials.entered, .rep-signature, #signature, #initials {
+  font-family: 'Brush Script MT', cursive;
+}
+
+.initials {
+  width: 75px;
+}
+
+#signature, #initials {
+  font-size: 2rem;
+  line-height: 2rem;
+}
+
+#ssn {
+  width: 105px;
+  text-align: center;
+}
+
+.entered {
+  position: unset;
+  color: initial;
+  background: initial;
+  opacity: 1;
+  border: none;
+  box-shadow: none;
+}
+
+.entered:hover {
+  box-shadow: none;
+  cursor: unset;
+}
+
+.indicator-tab {
+  position: absolute;
+  right: -15px;
+  margin-top: -15px;
+  transform: rotate(180deg);
+  font-size: 40px;
+  color: yellow;
+  -webkit-text-stroke: 2px black
+}
+
+#submit-and-download {
+  margin: 25px 0;
+  border-radius: 5px;
+}
+
+#loading {
+  margin-top: 25px;
+}
